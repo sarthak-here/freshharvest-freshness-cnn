@@ -1,0 +1,38 @@
+{
+  "architecture": "ResNet50",
+  "pretrained": true,
+  "frozen_backbone": true,
+  "learning_rate": 0.0005,
+  "dropout": 0.35,
+  "weight_decay": 0.0001,
+  "early_stopping_patience": 2,
+  "trainable_parameters": 32784,
+  "total_parameters": 23540816,
+  "best_epoch": 3,
+  "best_validation_accuracy": 0.98375,
+  "test_class_accuracy": 0.9804166666666667,
+  "test_freshness_accuracy": 0.9858333333333333,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.5153618042809622,
+      "train_accuracy": 0.7899107142857142,
+      "val_loss": 0.7177604556083679,
+      "val_accuracy": 0.96125
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.5579059261935098,
+      "train_accuracy": 0.9625892857142857,
+      "val_loss": 0.3656067490577698,
+      "val_accuracy": 0.9791666666666666
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.32538752036435264,
+      "train_accuracy": 0.9753571428571428,
+      "val_loss": 0.21477091550827027,
+      "val_accuracy": 0.98375
+    }
+  ]
+}

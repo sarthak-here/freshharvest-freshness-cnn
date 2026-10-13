@@ -1,0 +1,34 @@
+{
+  "architecture": "ResNet50",
+  "pretrained": true,
+  "frozen_backbone": true,
+  "trainable_parameters": 32784,
+  "total_parameters": 23540816,
+  "best_epoch": 3,
+  "best_validation_accuracy": 0.9933333333333333,
+  "test_class_accuracy": 0.9883333333333333,
+  "test_freshness_accuracy": 0.9925,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.9881516294819969,
+      "train_accuracy": 0.8667857142857143,
+      "val_loss": 0.3089341207345327,
+      "val_accuracy": 0.97875
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.24567105897835323,
+      "train_accuracy": 0.9825,
+      "val_loss": 0.15359397272268932,
+      "val_accuracy": 0.99125
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.1382471632531711,
+      "train_accuracy": 0.9898214285714285,
+      "val_loss": 0.09203677147626876,
+      "val_accuracy": 0.9933333333333333
+    }
+  ]
+}

@@ -23,7 +23,9 @@ The dataset is intentionally excluded from Git because it is provided assignment
 ```text
 freshharvest-cnn/
 |-- FreshHarvest_CNN.ipynb
+|-- FreshHarvest_Transfer_Learning.ipynb
 |-- train_model.py
+|-- train_transfer.py
 |-- requirements.txt
 |-- README.md
 |-- data/                 # ignored
@@ -36,5 +38,18 @@ freshharvest-cnn/
 2. Open `FreshHarvest_CNN.ipynb` and run all cells.
 3. Alternatively run `python train_model.py --data-dir data/FRUIT-16K --epochs 8`.
 
-The workflow creates deterministic train, validation, and test splits of 70%, 15%, and 15%, trains a compact CNN, selects the checkpoint with the best validation accuracy, and reports final test performance.
+The workflow creates deterministic train, validation, and test splits of 70%, 15%, and 15%. It first trains a compact baseline CNN from scratch without transfer learning, data augmentation, batch normalization, dropout, weight decay, or label smoothing. The optimization stage then introduces regularization and hyperparameter tuning, followed by a frozen-backbone ResNet50 transfer-learning experiment. Model selection uses validation accuracy, and the untouched test set is evaluated once per selected model.
+
+## Verified transfer-learning result
+
+The frozen ResNet50 backbone reduced the trainable parameter count to 32,784. Its classification head exceeded the 95% validation target after the first epoch and reached 99.33% validation accuracy after three epochs. The selected checkpoint achieved 98.83% exact 16-class test accuracy and 99.25% fresh-versus-spoiled test accuracy.
+
+Two head configurations were compared:
+
+| Learning rate | Dropout | Epoch 1 validation | Best validation | Test accuracy |
+|---:|---:|---:|---:|---:|
+| 0.0010 | 0.20 | 97.88% | 99.33% | 98.83% |
+| 0.0005 | 0.35 | 96.13% | 98.38% | 98.04% |
+
+The first configuration is the deployment candidate because it converged faster and produced the stronger validation and test results.
 

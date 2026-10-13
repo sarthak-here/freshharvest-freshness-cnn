@@ -71,14 +71,6 @@ def build_dataloaders(data_dir: Path, batch_size: int = 64):
     base = ImageFolder(data_dir)
     train_idx, val_idx, test_idx = stratified_indices(base.targets)
 
-    train_transform = transforms.Compose([
-        transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomRotation(10),
-        transforms.ColorJitter(brightness=0.15, contrast=0.15, saturation=0.10),
-        transforms.ToTensor(),
-        transforms.Normalize(MEAN, STD),
-    ])
     eval_transform = transforms.Compose([
         transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
         transforms.ToTensor(),
@@ -86,7 +78,7 @@ def build_dataloaders(data_dir: Path, batch_size: int = 64):
     ])
 
     datasets = {
-        "train": IndexedImageDataset(base, train_idx, train_transform),
+        "train": IndexedImageDataset(base, train_idx, eval_transform),
         "val": IndexedImageDataset(base, val_idx, eval_transform),
         "test": IndexedImageDataset(base, test_idx, eval_transform),
     }
@@ -116,18 +108,15 @@ class FreshHarvestCNN(nn.Module):
         self.classifier = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),
             nn.Flatten(),
-            nn.Dropout(0.30),
             nn.Linear(256, num_classes),
         )
 
     @staticmethod
     def _block(in_channels: int, out_channels: int) -> nn.Sequential:
         return nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1, bias=False),
-            nn.BatchNorm2d(out_channels),
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
-            nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1, bias=False),
-            nn.BatchNorm2d(out_channels),
+            nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(2),
         )
@@ -211,15 +200,20 @@ def save_training_plot(history: list[dict], output_path: Path) -> None:
     plt.close(fig)
 
 
-def train(data_dir: Path, artifacts_dir: Path, epochs: int = 8, batch_size: int = 64):
+def train(
+    data_dir: Path,
+    artifacts_dir: Path,
+    epochs: int = 8,
+    batch_size: int = 64,
+    epoch_candidates: tuple[int, ...] = (3, 5, 8),
+):
     seed_everything()
     artifacts_dir.mkdir(parents=True, exist_ok=True)
     classes, datasets, loaders = build_dataloaders(data_dir, batch_size)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = FreshHarvestCNN(len(classes)).to(device)
-    criterion = nn.CrossEntropyLoss(label_smoothing=0.05)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="max", patience=2, factor=0.5)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
     history = []
     best_val_accuracy = -1.0
@@ -232,7 +226,6 @@ def train(data_dir: Path, artifacts_dir: Path, epochs: int = 8, batch_size: int 
             model, loaders["train"], criterion, device, optimizer
         )
         val_loss, val_accuracy = run_epoch(model, loaders["val"], criterion, device)
-        scheduler.step(val_accuracy)
         row = {
             "epoch": epoch,
             "train_loss": train_loss,
@@ -274,6 +267,12 @@ def train(data_dir: Path, artifacts_dir: Path, epochs: int = 8, batch_size: int 
         "best_validation_accuracy": best_val_accuracy,
         "test_class_accuracy": test_accuracy,
         "test_freshness_accuracy": freshness_accuracy,
+        "epoch_experiments": [
+            row for row in history if row["epoch"] in epoch_candidates
+        ],
+        "selected_epoch": int(max(history, key=lambda row: row["val_accuracy"])["epoch"]),
+        "regularization_used": False,
+        "transfer_learning_used": False,
         "classification_report": report,
         "history": history,
     }

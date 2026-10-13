@@ -1,6 +1,7 @@
 data/
 artifacts/*.pth
 artifacts/*.onnx
+artifacts/transfer-tuned/best_resnet50_model.pt
 .ipynb_checkpoints/
 __pycache__/
 *.pyc
