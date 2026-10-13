@@ -1,5 +1,4 @@
 data/
-artifacts/*.pt
 artifacts/*.pth
 artifacts/*.onnx
 .ipynb_checkpoints/
