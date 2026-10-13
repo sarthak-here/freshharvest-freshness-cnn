@@ -181,7 +181,20 @@ The measured test performance is strong, but a production conveyor deployment st
 - special attention to spoiled-class recall because missed spoilage is more costly than an extra manual inspection;
 - retraining with new warehouse images when performance changes.
 
-## 9. Repository history
+## 9. Interactive client demo
+
+A Streamlit interface was added after model selection so a client can test the saved ResNet50 checkpoint without writing code. The app:
+
+- accepts JPG, PNG, and WebP files through drag and drop;
+- previews the uploaded image;
+- displays the predicted produce type and fresh/spoiled status;
+- reports prediction confidence and the top three classes;
+- flags predictions below 70% confidence for manual review;
+- caches the model so repeated predictions do not reload the checkpoint.
+
+The inference layer loads the model on CPU for portability. A local health check returned HTTP 200, and an image from the supplied lemon class was correctly identified as `F_Lemon`.
+
+## 10. Repository history
 
 The Git history intentionally preserves the project progression:
 
@@ -189,4 +202,5 @@ The Git history intentionally preserves the project progression:
 2. `474e691` - trained compact-CNN weights added after confirming the dataset remained ignored.
 3. `2b6c094` - corrected baseline and optimized ResNet50 transfer-learning workflow, comparison metrics, notebook, and best checkpoint.
 4. The next commit adds this complete development and experiment journal before the repository is published.
+5. The application commit adds the tested Streamlit client demo and reusable inference module.
 

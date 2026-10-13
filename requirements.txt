@@ -7,4 +7,5 @@ seaborn>=0.13
 scikit-learn>=1.4
 Pillow>=10.0
 jupyter>=1.0
+streamlit>=1.39
 

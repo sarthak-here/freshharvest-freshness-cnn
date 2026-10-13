@@ -24,6 +24,8 @@ The dataset is intentionally excluded from Git because it is provided assignment
 freshharvest-cnn/
 |-- FreshHarvest_CNN.ipynb
 |-- FreshHarvest_Transfer_Learning.ipynb
+|-- app.py
+|-- inference.py
 |-- train_model.py
 |-- train_transfer.py
 |-- requirements.txt
@@ -52,6 +54,16 @@ Two head configurations were compared:
 | 0.0005 | 0.35 | 96.13% | 98.38% | 98.04% |
 
 The first configuration is the deployment candidate because it converged faster and produced the stronger validation and test results.
+
+## Interactive client demo
+
+Start the drag-and-drop Streamlit demo from the project directory:
+
+```bash
+streamlit run app.py
+```
+
+Upload a JPG, PNG, or WebP image. The app displays the predicted produce type, fresh/spoiled status, confidence, and the model's top three predictions. Predictions below 70% confidence are flagged for manual inspection.
 
 For the full chronological record of model choices, unsuccessful experiments, measured metrics, and deployment considerations, see [EXPERIMENT_LOG.md](EXPERIMENT_LOG.md).
 
