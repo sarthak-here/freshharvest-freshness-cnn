@@ -53,3 +53,5 @@ Two head configurations were compared:
 
 The first configuration is the deployment candidate because it converged faster and produced the stronger validation and test results.
 
+For the full chronological record of model choices, unsuccessful experiments, measured metrics, and deployment considerations, see [EXPERIMENT_LOG.md](EXPERIMENT_LOG.md).
+
